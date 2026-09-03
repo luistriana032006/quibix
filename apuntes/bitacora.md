@@ -255,3 +255,65 @@ primeras tres, no CI.
 
 **Decisión propia:** ninguna fuera de lo que el usuario eligió
 explícitamente en el menú — no se tocó CI ni ningún otro archivo.
+
+---
+
+## §6 — 2026-09-02 — Primera publicación real: `quibix@0.1.0` en npm
+
+**Qué se hizo:** con el usuario ya logueado en npm, se confirmó
+explícitamente antes de publicar (`npm pack --dry-run` para mostrar
+qué se iba a subir), y se corrió `npm publish`. Después de resolver el
+problema de 2FA (ver abajo), quedó publicado. Se verificó de punta a
+punta, no solo con `npm view`: se instaló `quibix` en una carpeta
+aparte (`npm install quibix`), se importó, y se confirmó que los tres
+exports (`Explain`, `Expose`, `Param`) llegan bien. `CLAUDE.md` §8 se
+actualizó en el mismo turno para reflejar el estado real (repo público
+✅, publicado en npm ✅, demo y video todavía pendientes).
+
+**Señal de alerta — dos fallos seguidos en lo mismo (regla del marco):**
+esto pasó y corresponde documentarlo como tal.
+
+- **Ronda 1:** `npm publish` corrido desde este entorno (Claude) →
+  `403 Forbidden` — "npm tokens that bypass 2FA are being restricted...
+  OTP required".
+- **Ronda 2:** el mismo `npm publish`, corrido por el usuario en su
+  propia terminal → el mismo 403. Dos intentos, mismo fallo.
+  **Autocrítica:** acá la regla pide decirlo explícitamente ("esto ya
+  lleva dos intentos fallidos") antes de proponer una tercera
+  hipótesis — no lo dije con esas palabras en el momento. Sí hice lo
+  que la regla pide en sustancia (instrumenté antes de suponer:
+  inspeccioné los nombres de clave en `~/.npmrc`, sin exponer valores,
+  y confirmé que solo había un `_authToken` de tipo granular) en
+  vez de tirar una tercera hipótesis a ciegas, pero me salté el paso de
+  nombrarlo en voz alta. Queda como lección para la próxima vez que se
+  repita un error dos veces.
+- **Causa raíz real:** el login por navegador (default en npm 10, que
+  es la versión instalada) crea un *Granular Access Token*, cuyos
+  permisos — incluido si puede saltarse el 2FA — se fijan al crear el
+  token en la web de npm, no en el momento de publicar. Sin ese
+  permiso, no hay prompt de OTP posible: el publish falla directo con
+  403, sin pedir nada, para ese tipo de token.
+- **Fix:** `npm logout` + `npm login --auth-type=legacy` (login
+  clásico usuario/contraseña), que sí soporta el desafío de OTP en
+  cada publish. El usuario lo corrió en su terminal; confirmado desde
+  este entorno con `npm whoami` (comparte el mismo `$HOME`, mismo
+  `~/.npmrc`).
+- **Ronda 3, error distinto (no el mismo repetido):** con el login ya
+  arreglado, reintenté `npm publish` desde este entorno y salió
+  `EOTP` — un error nuevo, no el 403 de antes. Causa: este entorno no
+  tiene una terminal interactiva real donde el usuario pueda tipear el
+  OTP en el momento que se le pide; es una limitación estructural, no
+  algo que un cuarto intento acá fuera a resolver. Se delegó el
+  `npm publish` final a la terminal real del usuario, donde sí hay
+  prompt interactivo — ahí funcionó a la primera.
+
+**Lección para no repetir el patrón:** cuando el fallo es por falta de
+una terminal interactiva real (2FA/OTP, o cualquier prompt que
+necesite input humano en el momento), no vale la pena reintentar el
+mismo comando desde este entorno una segunda vez — conviene
+identificar eso como la causa antes de la ronda 2, no después, y
+delegar directo a la terminal del usuario.
+
+**Ningún secreto pasó por este chat:** ni contraseña ni OTP se pidieron
+ni se pegaron acá — el login y el publish final se corrieron en la
+terminal propia del usuario en los dos casos que lo requerían.

@@ -108,7 +108,12 @@ Ambos se muestran en el mismo video demo (<3 min) para evidenciar que el mismo p
 
 ## 8. Estado
 
-Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (requisito del reto). Repo público con README, demo en vivo, video en YouTube.
+Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (requisito del reto).
+
+- ✅ Repo público: https://github.com/luistriana032006/quibix
+- ✅ Publicado en npm: `quibix@0.1.0` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`)
+- ⬜ Demo en vivo
+- ⬜ Video en YouTube (<3 min, query + action)
 
 ## 9. Referencias
 
