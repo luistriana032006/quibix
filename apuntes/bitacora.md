@@ -479,3 +479,32 @@ el `demo/dist` que ese build de prueba generó (ya cubierto por
 `apuntes/estructura/estructura-del-proyecto.md` (la fila de
 `package.json` decía "dependencia" para `@mcp-b/global`, ya no era
 cierto).
+
+---
+
+## §11 — 2026-09-03 — `quibix@0.1.2` publicado — token de npm vencido en el camino
+
+**Qué se hizo:** `npm version patch` (0.1.1 → 0.1.2) corrido desde
+acá (no pide auth), pusheado a GitHub con su tag. El usuario corrió
+`npm publish` en su terminal.
+
+**Fallo real, diagnosticado en vez de repetido a ciegas:** el primer
+intento de publish dio `404 Not Found - PUT .../quibix`, y el usuario
+sospechó que era por tener el servidor del demo prendido. Antes de
+aceptar esa hipótesis se instrumentó: `npm whoami` desde este entorno
+(mismo `~/.npmrc`) devolvió `401 Unauthorized` — la sesión de npm
+(la que se había logueado en `§6`) había vencido. El `404` en el `PUT`
+es cómo el registro de npm a veces reporta un token inválido en una
+escritura, en vez de un `401` claro — no tenía nada que ver con el
+servidor de desarrollo local. Fix: `npm logout` + `npm login
+--auth-type=legacy` de nuevo, confirmado con `npm whoami` desde acá
+antes de reintentar. `npm publish` funcionó a la primera después de
+eso.
+
+**Verificación real de 0.1.2:** `npm view quibix version` (0.1.2),
+`npm view quibix readme` confirma las tres secciones nuevas del `§10`
+presentes, `npm view quibix dependencies` vacío, e instalación real en
+carpeta aparte — el único paquete que baja a `node_modules` es
+`quibix` (`@mcp-b/global` ya no viaja, confirma que el fix de `§10`
+funciona de verdad, no solo en la config). `CLAUDE.md` §8 actualizado
+con la versión y el detalle de "sin dependencias transitivas".

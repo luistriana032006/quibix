@@ -111,7 +111,7 @@ Ambos se muestran en el mismo video demo (<3 min) para evidenciar que el mismo p
 Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (requisito del reto).
 
 - ✅ Repo público: https://github.com/luistriana032006/quibix
-- ✅ Publicado en npm: `quibix@0.1.1` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`; README público ya en inglés)
+- ✅ Publicado en npm: `quibix@0.1.2` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`; README público completo en inglés; sin dependencias transitivas — `dependencies` vacío)
 - 🟡 Demo local: `demo/` (Vite) — `npm run demo`. Registra SLAS (action) y Germina (query) contra `document.modelContext`, polyfillado por `@mcp-b/global`. Verificado en un navegador real (Chromium headless vía Playwright), no solo que compila. Falta: desplegarlo en algún lado público, no solo local.
 - ⬜ Video en YouTube (<3 min, query + action)
 
