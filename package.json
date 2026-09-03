@@ -1,0 +1,40 @@
+{
+  "name": "quibix",
+  "version": "0.1.0",
+  "description": "Wrapper de decoradores TypeScript, agnóstico de framework, sobre la API nativa de WebMCP (document.modelContext).",
+  "license": "MIT",
+  "author": "Luis Miguel Triana Rueda (https://luistriana.dev)",
+  "homepage": "https://luistriana.dev",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "webmcp",
+    "mcp",
+    "model-context-protocol",
+    "decorators",
+    "typescript",
+    "ai-agents"
+  ],
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
