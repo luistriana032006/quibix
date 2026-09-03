@@ -26,6 +26,16 @@ no para que elijas entre ellas):
 
 Conclusión: publicá en **npm**, y ya. El resto de esta guía asume eso.
 
+**Nota — npm/yarn/pnpm no son "dónde" publicar, son "con qué".** Los
+tres son herramientas (CLI) que instalan dependencias y pueden correr
+`publish`; por defecto los tres publican al mismo lugar: el registro
+de npm (`registry.npmjs.org`). No existe un "registro de pnpm"
+separado — por eso no aparece en la tabla de arriba, no compite con
+npm en esa pregunta como sí lo hacen JSR o GitHub Packages. Si en algún
+momento preferís pnpm para desarrollar localmente (más rápido, menos
+disco), es válido, pero no cambia nada de esta guía: `pnpm publish`
+termina en el mismo lugar que `npm publish`.
+
 **Verifiqué el nombre antes de escribir esto:** `quibix` está
 disponible en npm (el registro devuelve 404 al día de hoy). No hace
 falta buscar un nombre alternativo ni scopearlo (`@luistriana/quibix`)
