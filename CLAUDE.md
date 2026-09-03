@@ -11,6 +11,7 @@ Notas de trabajo por sesión: [`apuntes/bitacora.md`](./apuntes/bitacora.md)
 (historial con anclas `§N`, nunca se reescribe) y el resumen de la sesión
 más reciente en `apuntes/resumen-sesion-<fecha>.md`. Mapa de archivos y
 carpetas del proyecto: [`apuntes/estructura/estructura-del-proyecto.md`](./apuntes/estructura/estructura-del-proyecto.md).
+Cómo publicar el paquete: [`apuntes/guia-publicacion.md`](./apuntes/guia-publicacion.md).
 
 ---
 

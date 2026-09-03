@@ -171,3 +171,49 @@ de contexto desactualizados).
 **Qué se tocó además:** el índice de `apuntes/` en `CLAUDE.md` no
 mencionaba `estructura/` — se actualizó en este mismo turno para no
 dejarlo desactualizado.
+
+---
+
+## §4 — 2026-09-02 — `git init` + commit inicial, guía de publicación en npm
+
+**Qué se hizo:**
+
+1. El repo no tenía historial de git (`git log` vacío, sin remoto) —
+   se corrió `git init`, se fijó la rama `main`, y se hizo el primer
+   commit (`cf9b8bb`) con los 22 archivos existentes hasta ese momento
+   (todo excepto `node_modules/` y `dist/`, ya cubiertos por
+   `.gitignore`). La identidad de git (`Luis Triana` /
+   `luistriana617@gmail.com`) ya estaba configurada globalmente — no
+   hizo falta tocarla.
+2. `apuntes/guia-publicacion.md`: guía de cómo publicar el paquete.
+   Antes de escribirla, **verifiqué en vivo** dos cosas en vez de
+   asumirlas: (a) el nombre `quibix` está libre en npm (el registro
+   devuelve 404), y (b) qué archivos entra realmente en el tarball —
+   corrí `npm pack --dry-run` de verdad y confirmé que coincide con lo
+   que documenté (`dist/**`, `README.md`, `LICENSE`, `package.json`;
+   nada de `src/`, `examples/`, `apuntes/` ni `reglas_documentacion.md`,
+   ya excluidos por el campo `files` de `package.json`).
+3. Se actualizó el índice de `apuntes/` en `CLAUDE.md` para incluir el
+   link a la guía (mismo turno, para no dejarlo desactualizado).
+
+**Decisión propia — de producto, consultada explícitamente en el
+documento en vez de aplicada:** la guía recomienda **npm** como único
+manejador de paquetes (con JSR y GitHub Packages mencionados y
+descartados, con motivo) en vez de dejarlo abierto — el usuario pidió
+justamente resolver esa duda, así que se tomó posición con
+justificación en vez de listar opciones sin recomendar. No se considera
+"decisión de producto aplicada sin avisar" porque no cambia nada del
+código: es contenido de una guía, no una acción irreversible.
+
+**Decisión propia — técnica-interna, NO aplicada, solo sugerida en la
+guía:** agregar un script `prepublishOnly` a `package.json` para que
+`npm publish` nunca corra sin buildear antes. Se dejó como paso
+recomendado y opcional dentro de la guía, sin editar `package.json`,
+porque tocar el manifiesto no estaba pedido explícitamente en este
+bloque (regla del marco: no "mejorar" cosas fuera de alcance sin
+avisar primero).
+
+**Qué NO se hizo:** no se creó el repo remoto en GitHub ni se hizo
+`git push` — el usuario pidió el commit local, no publicarlo. El paso
+de GitHub queda documentado en la guía como prerrequisito, pendiente de
+que el usuario decida hacerlo.
