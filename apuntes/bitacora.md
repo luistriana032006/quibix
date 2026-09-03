@@ -317,3 +317,32 @@ delegar directo a la terminal del usuario.
 **Ningún secreto pasó por este chat:** ni contraseña ni OTP se pidieron
 ni se pegaron acá — el login y el publish final se corrieron en la
 terminal propia del usuario en los dos casos que lo requerían.
+
+---
+
+## §7 — 2026-09-02 — `README.md` a inglés (el jurado del hackathon lee en inglés)
+
+**Qué se hizo:** traducción completa de `README.md` a inglés (la
+documentación pública que se ve en npm y en GitHub), y de
+`package.json` → `description` (también visible en la página de npm).
+Verificado: JSON válido, `npm run build` sigue limpio.
+
+**Decisión propia — técnica-interna:** los fragmentos de código de
+ejemplo dentro del propio `README.md` (las cadenas de `@Explain`/
+`@Param` en el Quickstart) también se tradujeron a inglés — a
+diferencia de `examples/*.ts`, donde esas mismas cadenas se dejaron en
+español a propósito (`§2`). La distinción: el README es la puerta de
+entrada para el jurado, tener texto en español justo en el primer
+bloque de código habría contradicho el propio pedido; `examples/*.ts`
+sigue siendo contenido de demo en español sin que se haya pedido
+cambiarlo — quedó preguntado explícitamente si también se traduce.
+
+**Qué NO se tocó:** `CLAUDE.md`, `apuntes/`, `reglas_documentacion.md`
+— siguen en español, son documentación interna del proyecto, no la
+documentación pública que ve el jurado. `examples/*.ts` tampoco, ver
+arriba.
+
+**Pendiente de decisión del usuario:** publicar una versión nueva en
+npm para que el README traducido quede visible en la página del
+paquete (ver explicación en el chat — npm sirve el README que estaba
+en el tarball de la versión publicada, no el del repo en vivo).

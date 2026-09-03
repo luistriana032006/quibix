@@ -1,7 +1,7 @@
 {
   "name": "quibix",
   "version": "0.1.0",
-  "description": "Wrapper de decoradores TypeScript, agnóstico de framework, sobre la API nativa de WebMCP (document.modelContext).",
+  "description": "Framework-agnostic TypeScript decorator wrapper over the native WebMCP API (document.modelContext).",
   "license": "MIT",
   "author": "Luis Miguel Triana Rueda (https://luistriana.dev)",
   "homepage": "https://luistriana.dev",

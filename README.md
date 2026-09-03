@@ -1,18 +1,18 @@
 # Quibix
 
-Wrapper de decoradores TypeScript, agnóstico de framework, sobre la API nativa de **WebMCP** (`document.modelContext`). Convierte clases y métodos anotados en tools invocables por agentes de IA — sin depender de React, Vue, ni ningún framework específico.
+Framework-agnostic TypeScript decorator wrapper over the native **WebMCP** API (`document.modelContext`). Turns annotated classes and methods into tools an AI agent can invoke — no dependency on React, Vue, or any specific framework.
 
-> Proyecto para **The WebMCP Challenge** (Devpost) — deadline 3 de septiembre de 2026.
-> Autor de la idea y la arquitectura: Luis Miguel Triana Rueda ([luistriana.dev](https://luistriana.dev)).
+> Built for **The WebMCP Challenge** (Devpost) — deadline September 3, 2026.
+> Idea and architecture by Luis Miguel Triana Rueda ([luistriana.dev](https://luistriana.dev)).
 
-## Instalación
+## Installation
 
 ```bash
 npm install
 npm run build
 ```
 
-Requiere que tu propio `tsconfig.json` (si consumes Quibix desde otro proyecto) tenga:
+If you're consuming Quibix from another project, your own `tsconfig.json` needs:
 
 ```json
 {
@@ -23,7 +23,7 @@ Requiere que tu propio `tsconfig.json` (si consumes Quibix desde otro proyecto) 
 }
 ```
 
-Quibix usa **decoradores legacy de TypeScript** (`experimentalDecorators`), no la sintaxis Stage 3 del TC39. Es una decisión deliberada: la propuesta Stage 3 eliminó los decoradores de parámetro, y `@Param` — pieza central de la API de Quibix — depende de ellos.
+Quibix uses **TypeScript's legacy decorators** (`experimentalDecorators`), not the TC39 Stage 3 syntax. That's deliberate: Stage 3 dropped parameter decorators, and `@Param` — a core piece of Quibix's API — depends on them.
 
 ## Quickstart
 
@@ -32,104 +32,104 @@ import { Expose, Explain, Param } from "quibix";
 
 @Expose()
 class SlasController {
-  @Explain("Calcula los aportes a seguridad social de un independiente", {
+  @Explain("Calculates an independent contractor's social-security contributions", {
     type: "action",
   })
   execute(
-    @Param("ingresoMensual", "number", "Ingreso mensual en COP") ingreso: number,
-    @Param("aportaARL", "boolean", "Si aporta a ARL") arl: boolean
+    @Param("monthlyIncome", "number", "Monthly income in COP") income: number,
+    @Param("contributesToARL", "boolean", "Whether they contribute to ARL") arl: boolean
   ) {
-    // tu lógica real
-    return { total: ingreso * 0.2 };
+    // your real logic here
+    return { total: income * 0.2 };
   }
 }
 
-// Instanciar la clase es lo que dispara el registro contra
+// Instantiating the class is what triggers registration against
 // document.modelContext.registerTool().
 new SlasController();
 ```
 
-Ver [`examples/`](./examples) para los dos casos completos del demo (query y action).
+See [`examples/`](./examples) for the two full demo cases (query and action).
 
-## Los tres decoradores
+## The three decorators
 
-Set cerrado para el hackathon: `@Expose`, `@Explain`, `@Param`.
+Closed set for the hackathon: `@Expose`, `@Explain`, `@Param`.
 
-### `@Expose()` — nivel clase
+### `@Expose()` — class level
 
-Marca una clase como "proveedor de tools". Al instanciarse (`new MiController()`), recorre los métodos anotados con `@Explain` y los registra contra `document.modelContext.registerTool()`, construyendo el `inputSchema` a partir de los `@Param` de cada uno.
+Marks a class as a "tool provider". On instantiation (`new MyController()`), it walks every method annotated with `@Explain` and registers it against `document.modelContext.registerTool()`, building each one's `inputSchema` from its `@Param` decorators.
 
-El registro ocurre **por instancia**, no al declarar la clase — así decides tú cuándo se expone cada tool.
+Registration happens **per instance**, not when the class is declared — so you control when each tool gets exposed.
 
-### `@Explain(description, options?)` — nivel método
+### `@Explain(description, options?)` — method level
 
-Declara un método como tool invocable por el agente.
+Declares a method as a tool the agent can invoke.
 
 ```ts
-@Explain("Calcula los aportes a seguridad social", {
+@Explain("Calculates social-security contributions", {
   type: "action", // "query" | "action"
 })
 ```
 
-- **`type: "query"`** — comandos de solo lectura (equivalente a GET). Admite `fallbackUrl` como respaldo para agentes que no pueden ejecutar la tool interactivamente.
-- **`type: "action"`** — comandos que ejecutan/mutan lógica real (equivalente a POST). Requieren ejecución en vivo; `fallbackUrl` no aplica porque no hay resultado sin correrlos (si lo declaras, Quibix avisa por consola y lo ignora).
+- **`type: "query"`** — read-only commands (equivalent to GET). Supports `fallbackUrl` as a fallback for agents that can't execute the tool interactively.
+- **`type: "action"`** — commands that execute/mutate real logic (equivalent to POST). They require live execution; `fallbackUrl` doesn't apply since there's no result without running them (if you declare it anyway, Quibix warns via the console and ignores it).
 
 ```ts
-@Explain("Consulta info de salud sexual por país", {
+@Explain("Look up sexual-health info by country", {
   type: "query",
-  fallbackUrl: "https://germina.health/{pais}",
+  fallbackUrl: "https://germina.health/{country}",
 })
 ```
 
-### `@Param(name, type, description)` — nivel parámetro
+### `@Param(name, type, description)` — parameter level
 
-Genera automáticamente el fragmento de JSON Schema de ese parámetro y aplica una coerción defensiva de tipo (string → number/boolean) al invocar, sin que escribas el parseo a mano.
+Automatically generates that parameter's JSON Schema fragment and applies defensive type coercion (string → number/boolean) on invocation, so you never write the parsing by hand.
 
 ```ts
 execute(
-  @Param("ingresoMensual", "number", "Ingreso mensual en COP") ingreso: number,
-  @Param("aportaARL", "boolean", "Si aporta a ARL") arl: boolean
+  @Param("monthlyIncome", "number", "Monthly income in COP") income: number,
+  @Param("contributesToARL", "boolean", "Whether they contribute to ARL") arl: boolean
 ) { ... }
 ```
 
-`name` es el nombre expuesto al agente en el schema — no tiene que coincidir con el nombre del parámetro en TypeScript. Un parámetro sin `@Param` no se expone ni se pasa al agente.
+`name` is the name exposed to the agent in the schema — it doesn't have to match the TypeScript parameter's name. A parameter without `@Param` isn't exposed and isn't passed to the agent.
 
-## Cómo se ejecuta una tool (los roles, sin ambigüedad)
+## How a tool actually runs (the roles, no ambiguity)
 
-1. **La lógica de negocio la escribe y ejecuta la página** (el cuerpo del método anotado) — el modelo nunca calcula ni inventa el resultado.
-2. **El modelo decide cuándo llamar la función y con qué parámetros**, a partir de la conversación con el usuario.
-3. **El navegador es el mensajero**: recibe la petición del agente, ejecuta el método real en el contexto de la página, devuelve el resultado.
-4. **El modelo redacta la respuesta final** en lenguaje natural a partir del resultado real devuelto.
+1. **The page writes and executes the business logic** (the annotated method's body) — the model never computes or invents the result.
+2. **The model decides when to call the function and with what parameters**, based on the conversation with the user.
+3. **The browser is the messenger**: it receives the agent's request, runs the real method in the page's context, and returns the result.
+4. **The model drafts the final answer** in natural language from the real result it got back.
 
-Analogía: el modelo es el mesero que toma el pedido y lo lleva a la cocina — no cocina. La cocina (tu `execute()`) es la única que sabe la receta real (la fórmula, la normativa, el cálculo).
+Analogy: the model is the waiter who takes the order to the kitchen — it doesn't cook. The kitchen (your `execute()`) is the only one that knows the real recipe (the formula, the regulation, the calculation).
 
-## El fallback declarativo de URL
+## The declarative URL fallback
 
-Ninguna librería de conveniencia existente hoy sobre WebMCP (`@mcp-b/react-webmcp`, `use-webmcp-tool` de Google Chrome Labs, `@webmcp-registry/kit`) resuelve el caso del agente que consulta pero no puede ejecutar la tool en vivo. Quibix lo cubre con `fallbackUrl` en tools `type: "query"`:
+No existing convenience library over WebMCP today (`@mcp-b/react-webmcp`, Google Chrome Labs' `use-webmcp-tool`, `@webmcp-registry/kit`) covers the case of an agent that can query but can't run the tool live. Quibix handles it with `fallbackUrl` on `type: "query"` tools:
 
-- Se incrusta como texto legible al final de la `description` que recibe el agente vía `getTools()` — funciona con cualquier runtime WebMCP, sin depender de un campo no estándar.
-- Además se adjunta como propiedad `fallbackUrl` directamente en el objeto de la tool, por si tu propio tooling o un runtime más permisivo la quiere leer estructuradamente.
+- It's embedded as readable text at the end of the `description` the agent receives via `getTools()` — this works with any WebMCP runtime, without depending on a non-standard field.
+- It's also attached as a `fallbackUrl` property directly on the tool object, in case your own tooling or a more permissive runtime wants to read it structurally.
 
-## Por qué agnóstico de framework
+## Why framework-agnostic
 
-Todas las librerías de conveniencia existentes hoy están atadas a React (hooks). Quibix usa decoradores de TypeScript, que son parte del lenguaje, no de un framework — funcionan igual en Next.js, Angular, Node puro, o vanilla TS con clases.
+Every convenience library that exists today is tied to React (hooks). Quibix uses TypeScript decorators, which are part of the language, not a framework — they work the same in Next.js, Angular, plain Node, or vanilla TS with classes.
 
-## Stack técnico
+## Tech stack
 
-- TypeScript (decoradores legacy, `experimentalDecorators` + `emitDecoratorMetadata`)
-- API nativa `document.modelContext.registerTool()` (spec WebMCP, W3C WebML Community Group)
-- Sin runtime dependencies obligatorias de framework
+- TypeScript (legacy decorators, `experimentalDecorators` + `emitDecoratorMetadata`)
+- Native `document.modelContext.registerTool()` API (WebMCP spec, W3C WebML Community Group)
+- No required framework runtime dependencies
 
-## Estado
+## Status
 
-Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source. Ver [`CLAUDE.md`](./CLAUDE.md) para el contexto completo del proyecto.
+Active prototype for the hackathon. MIT / open source. See [`CLAUDE.md`](./CLAUDE.md) for the full project context.
 
-## Referencias
+## References
 
-- Spec oficial: https://webmachinelearning.github.io/webmcp/
-- Repo del W3C WebML CG: https://github.com/webmachinelearning/webmcp
+- Official spec: https://webmachinelearning.github.io/webmcp/
+- W3C WebML CG repo: https://github.com/webmachinelearning/webmcp
 - Hackathon: https://webmcp.devpost.com/
 
-## Licencia
+## License
 
-MIT — ver [LICENSE](./LICENSE).
+MIT — see [LICENSE](./LICENSE).
