@@ -20,7 +20,7 @@ es esto y dónde vive?", no "¿por qué se hizo así?".
 | `reglas_documentacion.md` | El "Método AR": reglas de cómo debe documentar y comportarse el agente en este repo (qué reportar, cómo clasificar decisiones propias, convención de nombres de archivo). Importado desde `CLAUDE.md` con `@reglas_documentacion.md`. |
 | `README.md` | Documentación pública del paquete (la que ve alguien en npm o GitHub): instalación, quickstart, API de los tres decoradores, el fallback declarativo de URL, referencias a la spec. |
 | `LICENSE` | Licencia MIT (requisito del hackathon). |
-| `package.json` | Manifiesto npm: nombre del paquete, scripts (`build`, `dev`, `clean`, `typecheck`), y la única dependencia real, `typescript` (dev). |
+| `package.json` | Manifiesto npm: nombre del paquete, scripts (`build`, `dev`, `clean`, `typecheck`, `prepublishOnly`, `demo`), `typescript`/`vite` como dev dependencies, y `@mcp-b/global` (polyfill de `document.modelContext`) como dependencia — la usa `demo/`, no `src/`. |
 | `package-lock.json` | Lockfile de npm — versiones exactas resueltas. |
 | `tsconfig.json` | Configuración del compilador: decoradores legacy (`experimentalDecorators`), módulos `NodeNext` (para que el paquete compilado corra bajo Node ESM real, no solo bajo bundlers), `outDir: dist`. |
 | `.gitignore` | Ignora `node_modules/`, `dist/`, logs, `.env`. |
@@ -86,6 +86,17 @@ del demo del hackathon.
 |---|---|
 | `slas.example.ts` | Ejemplo `type: "action"` — calcula aportes a seguridad social de un independiente en Colombia. Fórmula simplificada solo para la demo (la real vive en slas.luistriana.dev); sin `fallbackUrl` porque una `action` no tiene resultado útil sin ejecutarse. |
 | `germina.example.ts` | Ejemplo `type: "query"` — consulta información de salud sexual por país, con `fallbackUrl` como respaldo para agentes que no pueden ejecutar la tool interactivamente. |
+
+## `demo/`
+
+App mínima (Vite) que prueba Quibix en un navegador real — no se
+publica en npm (no está en `files` de `package.json`), pero sí se
+versiona en git. Se levanta con `npm run demo`.
+
+| Archivo | Qué hace |
+|---|---|
+| `index.html` | Página mínima que carga `main.ts` como módulo. |
+| `main.ts` | Importa `@mcp-b/global` (por efecto lateral, **antes** que nada toque `document.modelContext`) para polyfillarlo, y recién después importa `examples/slas.example.ts` y `examples/germina.example.ts` — instanciarlos dispara el registro de sus tools vía `@Expose`. Loguea a consola si `document.modelContext` existe y el resultado de `getTools()`. |
 
 ## Carpetas generadas (no versionadas, no documentadas archivo por archivo)
 

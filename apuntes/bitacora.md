@@ -362,3 +362,74 @@ no se habían pusheado solos). `CLAUDE.md` §8 tenía la versión vieja
 (`0.1.0`) escrita a mano en el bullet de "publicado en npm" — quedó
 desactualizada apenas se publicó la 0.1.1, se corrigió en este mismo
 turno.
+
+---
+
+## §9 — 2026-09-03 — `@mcp-b/global` + primer demo local, verificado en navegador real
+
+**Contexto:** el usuario pidió instalar `@mcp-b/global`, inicializarlo
+en el entry point de la app antes de que se monte Quibix, y confirmar
+`document.modelContext` en consola. El repo no tenía ningún entry point
+de app (solo `src/` y `examples/*.ts`, sin HTML/bundler) — se paró
+antes de inventar una arquitectura de demo sin preguntar (regla del
+marco) y se le ofreció al usuario elegir entre Vite dev server o HTML
+estático sin build; eligió Vite.
+
+**Qué se hizo:**
+
+1. `npm install @mcp-b/global` → `dependencies` (`^5.1.0`). Antes de
+   instalarlo se verificó la API real contra dos fuentes con
+   autoridad (docs.mcp-b.ai y el repo en GitHub), porque el registro
+   de npm devuelve una descripción desactualizada/engañosa que
+   menciona `navigator.modelContext` en versiones recientes — no era
+   cierto, expone `document.modelContext`, coincide con la spec y con
+   lo que Quibix ya tenía tipado.
+2. `demo/index.html` + `demo/main.ts`: importa `@mcp-b/global` primero
+   (efecto lateral), confirma por consola que `document.modelContext`
+   existe, y recién después importa `examples/slas.example.ts` y
+   `examples/germina.example.ts` (instanciarlos dispara el registro
+   vía `@Expose`).
+3. `npm run build` (de la librería) sigue limpio después de todo esto
+   — no se tocó `src/`.
+4. `package.json` → nuevo script `demo` (`vite demo`).
+
+**Señal de alerta que casi se repite — instrumenté antes del segundo
+intento, esta vez sí:** `npm install -D vite` trajo Vite 8, que por
+default usa Rolldown (parser oxc) en vez de esbuild — y ese parser
+rechaza los decoradores legacy con parámetros (`"Decorators are not
+valid here"`), rompiendo el build. En vez de tantear una segunda
+solución a ciegas, revisé la doc oficial de rolldown-vite buscando un
+flag de compatibilidad; no lo encontré documentado, así que la
+decisión fue **fijar `vite` a la major 6** (esbuild, soporte maduro de
+`experimentalDecorators` desde hace años) en vez de pelear con un
+motor bleeding-edge para un demo — funcionó al primer intento después
+del diagnóstico. Esta sí es la aplicación correcta de la regla: se
+nombró la causa raíz antes de actuar, no se adivinó una tercera vez.
+
+**Verificación real, no solo "compiló":** se instaló `playwright`
+temporalmente (`--no-save`, nunca tocó `package.json`/lockfile), se
+levantó `vite demo` en background, y se manejó un Chromium headless de
+verdad para leer la consola del navegador. Resultado exacto:
+`document.modelContext` existe (`BrowserMcpServer`, la clase del
+polyfill), y `getTools()` devuelve las dos tools con su `inputSchema`
+e `readOnlyHint` correctos. **Hallazgo no trivial:** el campo
+`fallbackUrl` que Quibix adjunta al objeto de la tool **no sobrevive**
+el round-trip real de `getTools()` del polyfill (se descarta) —
+confirma que la decisión de `§1`/`§7` de incrustarlo también en el
+texto de `description` no era redundante, era la única vía que de
+verdad llega al agente. Se limpió todo lo temporal después
+(`playwright` desinstalado, servidor de dev matado, script de
+verificación borrado — nada de esto quedó en el repo).
+
+**Documentos actualizados en el mismo turno (regla de no dejar
+contexto desactualizado):** `CLAUDE.md` §8 (demo pasa de ⬜ a 🟡, con
+el detalle de qué falta) y la nota vieja de "el directorio está vacío"
+en las notas para el agente (llevaba desde `§1` sin corregirse, ya no
+era cierto); `apuntes/estructura/estructura-del-proyecto.md` con la
+fila de `demo/` y las dependencias nuevas en `package.json`.
+
+**Decisión propia — técnica-interna:** el script `demo` en
+`package.json` no fue pedido explícitamente, se agregó por
+consistencia con los demás scripts documentados (`build`, `dev`,
+`clean`, `typecheck`, `prepublishOnly`) — sin él, `npm run demo` no
+existiría y habría que acordarse de `npx vite demo` a mano.

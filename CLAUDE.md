@@ -112,7 +112,7 @@ Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (re
 
 - ✅ Repo público: https://github.com/luistriana032006/quibix
 - ✅ Publicado en npm: `quibix@0.1.1` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`; README público ya en inglés)
-- ⬜ Demo en vivo
+- 🟡 Demo local: `demo/` (Vite) — `npm run demo`. Registra SLAS (action) y Germina (query) contra `document.modelContext`, polyfillado por `@mcp-b/global`. Verificado en un navegador real (Chromium headless vía Playwright), no solo que compila. Falta: desplegarlo en algún lado público, no solo local.
 - ⬜ Video en YouTube (<3 min, query + action)
 
 ## 9. Referencias
@@ -125,7 +125,7 @@ Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (re
 
 ## Notas para Claude Code trabajando en este repo
 
-- El directorio está vacío al día de hoy (2026-09-01) — todo el código está por escribir desde cero.
+- El proyecto ya tiene código y estructura (`src/`, `examples/`, `demo/`) — ver [`apuntes/estructura/estructura-del-proyecto.md`](./apuntes/estructura/estructura-del-proyecto.md) para el mapa completo antes de asumir nada.
 - El set de decoradores es **cerrado** para el hackathon: solo `@Expose`, `@Explain`, `@Param`. No agregar decoradores extra sin que el usuario lo pida explícitamente.
 - No introducir dependencias de un framework específico (React, Vue, Angular) en el core del wrapper — eso rompe la propuesta de valor de "agnóstico de framework".
 - La lógica de negocio de cada tool vive en el `execute()` del desarrollador; el wrapper solo se encarga de registro, schema y coerción de tipos — no debe interceptar ni reinterpretar el resultado.
