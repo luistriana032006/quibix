@@ -217,3 +217,41 @@ avisar primero).
 `git push` — el usuario pidió el commit local, no publicarlo. El paso
 de GitHub queda documentado en la guía como prerrequisito, pendiente de
 que el usuario decida hacerlo.
+
+---
+
+## §5 — 2026-09-02 — `package.json` con datos reales del repo + push a GitHub
+
+**Contexto:** el usuario ya había creado el repo en GitHub
+(`luistriana032006/quibix`, con `origin` ya conectado y 2 commits ya
+pusheados por su cuenta) y la cuenta de npm, y preguntó qué podía
+configurar yo desde acá. Antes de tocar nada, inspeccioné el estado
+real (`git remote -v`, `git status -sb`, `npm whoami`, si existía
+`~/.npmrc`) en vez de asumirlo — encontré 1 commit local sin pushear
+(`13945c8`) y confirmé que no hay sesión de npm en este entorno
+(`ENEEDAUTH`, sin `.npmrc`).
+
+Presenté el menú de lo que podía hacer sin pedir nada sensible
+(pushear el pendiente, completar `package.json`, agregar
+`prepublishOnly`, CI opcional) y dejé elegir — el usuario pidió las
+primeras tres, no CI.
+
+**Qué se hizo:**
+
+1. `package.json` → se agregaron `repository` y `bugs` apuntando a
+   `github.com/luistriana032006/quibix` (URL real, ya no `<tu-usuario>`
+   de plantilla), y `scripts.prepublishOnly` (`npm run clean && npm
+   run build`) — ambos ya estaban documentados como "recomendado, no
+   aplicado" en la guía desde `§4`.
+2. Verificado: JSON válido, `npm run build` sigue limpio después del
+   cambio.
+3. `apuntes/guia-publicacion.md` actualizada en el mismo turno (regla
+   de no dejar documentos desactualizados): las secciones 1 y 3 ahora
+   dicen "✅ Ya hecho" en vez de los pasos pendientes, y el resumen de
+   comandos al final ya no incluye `gh repo create`/`git push -u`
+   (innecesarios, el repo ya existe).
+4. Commit de estos cambios + push del commit pendiente y el nuevo,
+   ambos a `origin/main`.
+
+**Decisión propia:** ninguna fuera de lo que el usuario eligió
+explícitamente en el menú — no se tocó CI ni ningún otro archivo.

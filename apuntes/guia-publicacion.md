@@ -48,33 +48,9 @@ Si todavía no tenés cuenta: creála en https://www.npmjs.com/signup
 
 ## 1. Repo público en GitHub (lo pide el hackathon, y ayuda al paquete)
 
-El repo local ya tiene su primer commit (`git log` te lo muestra), pero
-todavía no tiene remoto. Para conectarlo:
-
-```bash
-# Creá el repo vacío en GitHub primero (desde la web, o con gh):
-gh repo create quibix --public --source=. --remote=origin
-
-# Si ya lo creaste a mano en github.com:
-git remote add origin https://github.com/<tu-usuario>/quibix.git
-
-git push -u origin main
-```
-
-Una vez que el repo tiene URL, vale la pena agregar a `package.json`
-(no lo hice yo para no tocar `package.json` sin que lo pidieras):
-
-```json
-{
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/<tu-usuario>/quibix.git"
-  },
-  "bugs": {
-    "url": "https://github.com/<tu-usuario>/quibix/issues"
-  }
-}
-```
+✅ **Ya hecho.** El repo vive en
+https://github.com/luistriana032006/quibix, con `origin` conectado y
+`package.json` → `repository`/`bugs` ya apuntan ahí.
 
 ## 2. Login en npm
 
@@ -93,24 +69,9 @@ npm whoami
 
 ## 3. Build limpio antes de publicar
 
-`npm publish` no corre el build por vos a menos que se lo digas
-explícitamente. Hoy no hay un script `prepublishOnly`, así que el paso
-manual es:
-
-```bash
-npm run clean
-npm run build
-```
-
-**Recomendado (opcional, no lo apliqué):** agregar a `package.json` →
-`scripts`:
-
-```json
-"prepublishOnly": "npm run clean && npm run build"
-```
-
-Así `npm publish` nunca puede salir con un `dist/` viejo o a medio
-generar, sin que tengas que acordarte del paso manual cada vez.
+✅ **Ya hecho.** `package.json` → `scripts.prepublishOnly` corre
+`npm run clean && npm run build` automáticamente antes de cualquier
+`npm publish` — no hace falta acordarse del paso manual.
 
 ## 4. Qué se va a publicar (verificalo antes de mandar)
 
@@ -179,15 +140,11 @@ mismo `package.json`), así que después solo falta:
 git push && git push --tags
 ```
 
-## Resumen de comandos, en orden, primera vez
+## Resumen de comandos — lo que falta (repo y `prepublishOnly` ya están)
 
 ```bash
-gh repo create quibix --public --source=. --remote=origin
-git push -u origin main
-
 npm login
-npm run clean && npm run build
-npm pack --dry-run   # revisar qué se va a publicar
+npm pack --dry-run   # revisar qué se va a publicar (el build lo corre prepublishOnly solo)
 npm publish
 npm view quibix      # confirmar
 ```

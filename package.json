@@ -5,6 +5,13 @@
   "license": "MIT",
   "author": "Luis Miguel Triana Rueda (https://luistriana.dev)",
   "homepage": "https://luistriana.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luistriana032006/quibix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/luistriana032006/quibix/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -24,7 +31,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
     "webmcp",
