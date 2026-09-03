@@ -111,7 +111,7 @@ Ambos se muestran en el mismo video demo (<3 min) para evidenciar que el mismo p
 Prototipo en desarrollo activo para el hackathon. Licencia MIT / open source (requisito del reto).
 
 - ✅ Repo público: https://github.com/luistriana032006/quibix
-- ✅ Publicado en npm: `quibix@0.1.0` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`)
+- ✅ Publicado en npm: `quibix@0.1.1` — `npm install quibix` (verificado con una instalación real, no solo con `npm publish`; README público ya en inglés)
 - ⬜ Demo en vivo
 - ⬜ Video en YouTube (<3 min, query + action)
 

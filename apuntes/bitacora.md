@@ -346,3 +346,19 @@ arriba.
 npm para que el README traducido quede visible en la página del
 paquete (ver explicación en el chat — npm sirve el README que estaba
 en el tarball de la versión publicada, no el del repo en vivo).
+
+---
+
+## §8 — 2026-09-02 — `quibix@0.1.1` — README en inglés ya visible en npm
+
+**Qué se hizo:** el usuario corrió `npm version patch` y `npm publish`
+en su propia terminal (0.1.0 → 0.1.1). Se verificó desde acá:
+`npm view quibix version` (0.1.1), `npm view quibix readme` (confirma
+que el registro ya sirve el README en inglés — no solo que se publicó,
+sino que el contenido correcto llegó), y una instalación real de nuevo
+en una carpeta aparte con los tres exports. Se sincronizó a GitHub el
+commit + tag que generó `npm version patch` (`git push --follow-tags`,
+no se habían pusheado solos). `CLAUDE.md` §8 tenía la versión vieja
+(`0.1.0`) escrita a mano en el bullet de "publicado en npm" — quedó
+desactualizada apenas se publicó la 0.1.1, se corrigió en este mismo
+turno.
