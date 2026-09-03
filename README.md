@@ -5,6 +5,16 @@ Framework-agnostic TypeScript decorator wrapper over the native **WebMCP** API (
 > Built for **The WebMCP Challenge** (Devpost) — deadline September 3, 2026.
 > Idea and architecture by Luis Miguel Triana Rueda ([luistriana.dev](https://luistriana.dev)).
 
+## The problem it solves
+
+Today, an AI agent with no WebMCP support interacts with a page by guessing: it reads the DOM or a screenshot, infers what a given button does, with no guarantee it gets it right. On top of that:
+
+- It can't tell colors, visual hierarchy, or purely aesthetic affordances apart.
+- It can't execute JavaScript or fire real clicks if the agent has no interactive browser (e.g. terminal agents, API agents, or `web_fetch`).
+- Even where native WebMCP support does exist, hand-writing `document.modelContext.registerTool()` for every function is repetitive and verbose.
+
+**Quibix** solves the second part of that problem — the verbosity — with a Spring Boot/NestJS-style annotation pattern, and adds a piece we haven't found in any existing library in the ecosystem (`@mcp-b/react-webmcp`, Google Chrome Labs' `use-webmcp-tool`, `@webmcp-registry/kit`): a **declarative URL fallback** for when the querying agent can't execute the tool interactively (details below).
+
 ## Installation
 
 ```bash
@@ -102,6 +112,47 @@ execute(
 4. **The model drafts the final answer** in natural language from the real result it got back.
 
 Analogy: the model is the waiter who takes the order to the kitchen — it doesn't cook. The kitchen (your `execute()`) is the only one that knows the real recipe (the formula, the regulation, the calculation).
+
+## Full example — a real use case: SLAS
+
+```ts
+@Expose()
+class SlasController {
+  @Explain("Calculates an independent contractor's social-security contributions", {
+    type: "action",
+  })
+  execute(
+    @Param("monthlyIncome", "number", "Monthly income in COP") income: number,
+    @Param("contributesToARL", "boolean", "Whether they contribute to ARL") arl: boolean,
+    @Param("riskLevel", "number", "Risk level, 1-5") riskLevel: number,
+    @Param("contributesToCCF", "boolean", "Whether they contribute to the family compensation fund") ccf: boolean
+  ) {
+    // real logic already live at slas.luistriana.dev
+    return {
+      health /* ... */,
+      pension /* ... */,
+      arl /* ... */,
+      fsp /* ... */,
+      total /* ... */,
+    };
+  }
+}
+```
+
+This is illustrative — see [`examples/slas.example.ts`](./examples/slas.example.ts) for a runnable version (simplified for the demo, not a normative reference).
+
+## Hackathon demo — the two command types
+
+- **Query**: look up a country's info on Germina (read-only, with `fallbackUrl`).
+- **Action**: calculate real contributions on SLAS (execution, an audited result).
+
+Both run off the exact same annotation pattern. [`demo/`](./demo) is a working Vite page that registers both against a real `document.modelContext` — polyfilled by [`@mcp-b/global`](https://www.npmjs.com/package/@mcp-b/global) for browsers without native WebMCP support yet. Run it locally:
+
+```bash
+npm run demo
+```
+
+A recorded walkthrough (<3 min) is still pending.
 
 ## The declarative URL fallback
 

@@ -20,7 +20,7 @@ es esto y dónde vive?", no "¿por qué se hizo así?".
 | `reglas_documentacion.md` | El "Método AR": reglas de cómo debe documentar y comportarse el agente en este repo (qué reportar, cómo clasificar decisiones propias, convención de nombres de archivo). Importado desde `CLAUDE.md` con `@reglas_documentacion.md`. |
 | `README.md` | Documentación pública del paquete (la que ve alguien en npm o GitHub): instalación, quickstart, API de los tres decoradores, el fallback declarativo de URL, referencias a la spec. |
 | `LICENSE` | Licencia MIT (requisito del hackathon). |
-| `package.json` | Manifiesto npm: nombre del paquete, scripts (`build`, `dev`, `clean`, `typecheck`, `prepublishOnly`, `demo`), `typescript`/`vite` como dev dependencies, y `@mcp-b/global` (polyfill de `document.modelContext`) como dependencia — la usa `demo/`, no `src/`. |
+| `package.json` | Manifiesto npm: nombre del paquete, scripts (`build`, `dev`, `clean`, `typecheck`, `prepublishOnly`, `demo`). `dependencies` está vacío a propósito — Quibix no requiere runtime nada. `typescript`, `vite` y `@mcp-b/global` (polyfill de `document.modelContext`) son `devDependencies`: los usa `demo/`, no `src/`, así que no viajan con el paquete publicado. |
 | `package-lock.json` | Lockfile de npm — versiones exactas resueltas. |
 | `tsconfig.json` | Configuración del compilador: decoradores legacy (`experimentalDecorators`), módulos `NodeNext` (para que el paquete compilado corra bajo Node ESM real, no solo bajo bundlers), `outDir: dist`. |
 | `.gitignore` | Ignora `node_modules/`, `dist/`, logs, `.env`. |

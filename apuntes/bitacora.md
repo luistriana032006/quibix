@@ -433,3 +433,49 @@ fila de `demo/` y las dependencias nuevas en `package.json`.
 consistencia con los demás scripts documentados (`build`, `dev`,
 `clean`, `typecheck`, `prepublishOnly`) — sin él, `npm run demo` no
 existiría y habría que acordarse de `npx vite demo` a mano.
+
+---
+
+## §10 — 2026-09-03 — README: secciones faltantes del brief original + fix de `dependencies`
+
+**Qué se hizo:** el usuario pegó el brief original completo (en
+español, las 9 secciones de siempre) y pidió agregarlo al README. Se
+comparó contra el README actual (inglés) para no duplicar: la mayoría
+ya estaba cubierta (los tres decoradores, cómo se ejecuta una tool,
+por qué agnóstico, stack, referencias). Se agregaron, traducidas y
+adaptadas, las tres piezas que faltaban:
+
+1. **"The problem it solves"** — no existía como sección propia en el
+   README; se agregó cerca del inicio.
+2. **"Full example — a real use case: SLAS"** — el Quickstart solo
+   tenía la versión simplificada de 2 parámetros; se agregó el ejemplo
+   completo de 4 parámetros del brief original, marcado explícitamente
+   como ilustrativo (usa `/* ... */` como placeholder, no valores
+   reales) y con link a `examples/slas.example.ts` para la versión que
+   sí corre. Se verificó con `esbuild` (parse-only, sin type-check)
+   que el snippet no tiene errores de sintaxis antes de dejarlo en el
+   README.
+3. **"Hackathon demo — the two command types"** — el texto original
+   hablaba de un video futuro; se actualizó para reflejar lo que ya es
+   real (`demo/` con Vite, `npm run demo`) en vez de copiar la versión
+   vieja tal cual, y se dejó una nota honesta de que el video grabado
+   sigue pendiente (coincide con `CLAUDE.md` §8).
+
+**Hallazgo al verificar, no al pedido — se corrigió sin pausar
+(técnica-interna):** al revisar el `package.json` para el link del
+demo, se encontró que `@mcp-b/global` (agregado en `§9`) había quedado
+en `dependencies` en vez de `devDependencies`. Nunca se usa dentro de
+`src/` — solo lo importa `demo/main.ts` — así que dejarlo en
+`dependencies` significaba que cualquiera que hiciera
+`npm install quibix` se traía ese polyfill sin necesitarlo,
+contradiciendo lo que el propio README ya decía ("No required
+framework runtime dependencies"). Se movió a `devDependencies`
+(`npm uninstall` + `npm install -D`), se verificó que `npm run build`
+y `npx vite build demo` siguen limpios después del cambio, y se limpió
+el `demo/dist` que ese build de prueba generó (ya cubierto por
+`.gitignore`, nunca llegó a git).
+
+**Documentos actualizados en el mismo turno:**
+`apuntes/estructura/estructura-del-proyecto.md` (la fila de
+`package.json` decía "dependencia" para `@mcp-b/global`, ya no era
+cierto).

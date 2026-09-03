@@ -44,10 +44,8 @@
     "ai-agents"
   ],
   "devDependencies": {
+    "@mcp-b/global": "^5.1.0",
     "typescript": "^5.6.3",
     "vite": "^6.4.3"
-  },
-  "dependencies": {
-    "@mcp-b/global": "^5.1.0"
   }
 }
